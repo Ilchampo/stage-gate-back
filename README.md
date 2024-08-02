@@ -14,7 +14,7 @@ StageGate is a SaaS platform designed to streamline and enhance the process of c
 ## Technology Stack
 - **Backend**: Node.js with TypeScript, Express.js, Prisma ORM
 - **Database**: PostgreSQL
-- **API**: GraphQL
+- **API**: RESTful
 
 ## Data Model
 - **Workspace**: Contains information about a project workspace.

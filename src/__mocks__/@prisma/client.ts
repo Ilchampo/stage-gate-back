@@ -17,6 +17,13 @@ const mockPrisma = {
     delete: jest.fn(),
     deleteMany: jest.fn(),
   },
+  tblPlatformFeature: {
+    create: jest.fn(),
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
 };
 
 const PrismaClientMock = jest.fn().mockImplementation(() => {
