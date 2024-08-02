@@ -105,7 +105,7 @@ model TblUser {
 
 model TblUserLogin {
   id            String   @id @default(uuid()) @map("id")
-  userId        String   @map("user_id")
+  userId        String   @unique @map("user_id")
   user          TblUser  @relation(fields: [userId], references: [id])
   password      String   @map("password")
   onBoarding    Boolean  @map("on_boarding")

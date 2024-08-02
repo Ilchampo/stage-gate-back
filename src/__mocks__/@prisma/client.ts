@@ -38,6 +38,11 @@ const mockPrisma = {
     update: jest.fn(),
     delete: jest.fn(),
   },
+  tblUserLogin: {
+    create: jest.fn(),
+    findFirst: jest.fn(),
+    update: jest.fn(),
+  },
 };
 
 const PrismaClientMock = jest.fn().mockImplementation(() => {
