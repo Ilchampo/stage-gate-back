@@ -42,6 +42,7 @@ const mockPrisma = {
     create: jest.fn(),
     findFirst: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   },
 };
 
