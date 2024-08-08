@@ -1,275 +1,222 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+enum EnumCheck {
+  YES         @map("yes")
+  NO          @map("no")
+  REQUIRED    @map("required")
+  NOT_APPLIED @map("not-applied")
 }
 
-enum ReleaseStatus {
-  complete
-  inProgress @map("in_progress")
-  onHold     @map("on_hold")
-  canceled
+enum EnumRole {
+  ADMIN        @map("admin")
+  MANAGER      @map("manager")
+  COLLABORATOR @map("collaborator")
 }
 
-enum FieldStatus {
-  yes
-  no
-  na
+enum EnumStatus {
+  APPROVED    @map("approved")
+  COMPLETED   @map("completed")
+  IN_PROGRESS @map("in-progress")
+  REJECTED    @map("rejected")
+  PENDING     @map("pending")
+  CANCELLED   @map("cancelled")
 }
 
-enum ReviewStatus {
-  approved
-  rejected
-  updated
-}
-
-enum UserRole {
-  manager
-  collaborator
-  admin
-}
-
-enum NotificationStatus {
-  statusApproved @map("status_approved")
-  statusRejected @map("status_rejected")
-  statusUpdated  @map("status_updated")
-  statusComplete @map("status_complete")
-  statusReminder @map("status_reminder")
-  statusAlert    @map("status_alert")
-}
-
-enum NotificationType {
-  featureReviewType @map("feature_review_type")
-  featureType       @map("feature_type")
-  releaseType       @map("release_type")
-}
-
-model TblLog {
-  id          String   @id @default(uuid()) @map("id")
-  description String   @map("description")
-  createdOn   DateTime @map("created_on")
-
-  @@map("tbl_log")
-}
-
-model TblPlatformFeature {
-  id        String   @id @default(uuid()) @map("id")
-  feature   String   @unique @map("feature")
-  enabled   Boolean  @map("enabled")
-  createdOn DateTime @map("created_on")
+model PlatformFeature {
+  id        String    @id @default(uuid())
+  feature   String
+  enabled   Boolean   @default(false)
+  updatedOn DateTime?
 
   @@map("tbl_platform_feature")
 }
 
-model TblWorkspace {
-  id               String                @id @default(uuid()) @map("id")
-  name             String                @map("name")
-  description      String                @map("description")
-  repository       String                @unique @map("repository")
-  logo             Bytes?                @map("logo")
-  code             String                @unique @map("code")
-  WorkspaceSetting TblWorkspaceSetting?
-  UserNotification TblUserNotification[]
-  Release          TblRelease[]
+model PlatformLog {
+  id          String   @id @default(uuid())
+  description String
+  createdOn   DateTime @default(now())
 
-  @@map("tbl_workspace")
+  @@map("tbl_platform_log")
 }
 
-model TblWorkspaceSetting {
-  id               String       @id @default(uuid()) @map("id")
-  workspaceId      String       @unique @map("workspace_id")
-  workspace        TblWorkspace @relation(fields: [workspaceId], references: [id])
-  maxManagers      Int          @default(1) @map("max_managers")
-  maxCollaborators Int          @map("max_collaborators")
-  featureReviewers Int          @map("feature_reviewers")
+model PlatformCode {
+  id             String   @id @default(uuid())
+  code           String   @unique
+  createdOn      DateTime @default(now())
+  validUntilDate DateTime
 
-  @@map("tbl_workspace_setting")
+  @@map("tbl_platform_code")
 }
 
-model TblUser {
-  id               String                @id @default(uuid()) @map("id")
-  firstName        String                @map("firstname")
-  lastName         String                @map("lastname")
-  email            String                @unique @map("email")
-  avatar           Bytes?                @map("avatar")
-  UserLogin        TblUserLogin[]
-  UserNotification TblUserNotification[]
-  Feature          TblFeature[]
-  FeatureReview    TblFeatureReview[]
+model User {
+  id        String @id @default(uuid())
+  firstname String
+  lastname  String
+  email     String @unique
+  avatar    Bytes?
+
+  userLogin         UserLogin?
+  workspaceUsers    WorkspaceUser[]
+  notifications     Notification[]
+  featuresDeveloped Feature[]       @relation("FeatureDeveloper")
+  featuresReviewed  FeatureReview[] @relation("FeatureReviewer")
 
   @@map("tbl_user")
 }
 
-model TblUserLogin {
-  id            String   @id @default(uuid()) @map("id")
-  userId        String   @unique @map("user_id")
-  user          TblUser  @relation(fields: [userId], references: [id])
-  password      String   @map("password")
-  onBoarding    Boolean  @map("on_boarding")
-  verifiedEmail Boolean  @map("verified_email")
-  privacyPolicy Boolean  @map("privacy_policy")
-  role          UserRole @map("role")
+model UserLogin {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  password        String
+  onBoarding      Boolean @default(false)
+  verifiedEmail   Boolean @default(false)
+  privacyPolicy   Boolean @default(false)
+  defaultLanguage String  @default("en")
+  platformCode    String?
+
+  user User @relation(fields: [userId], references: [id])
 
   @@map("tbl_user_login")
 }
 
-model TblUserNotification {
-  id               String             @id @default(uuid()) @map("id")
-  workspaceId      String             @map("workspace_id")
-  workspace        TblWorkspace       @relation(fields: [workspaceId], references: [id])
-  userId           String             @map("user_id")
-  user             TblUser            @relation(fields: [userId], references: [id])
-  featureReviewId  String?            @map("feature_review_id")
-  featureReview    TblFeatureReview?  @relation(fields: [featureReviewId], references: [id])
-  releaseId        String?            @map("release_id")
-  release          TblRelease?        @relation(fields: [releaseId], references: [id])
-  createdOn        DateTime           @map("created_on")
-  readByUser       Boolean            @map("read_by_user")
-  notificationType NotificationType   @map("notification_type")
-  statusType       NotificationStatus @map("status_type")
+model Workspace {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  repository  String
+  logo        Bytes?
+  code        String @unique
 
-  @@map("tbl_user_notification")
+  workspaceSettings WorkspaceSetting?
+  workspaceUsers    WorkspaceUser[]
+  releases          Release[]
+  notifications     Notification[]
+
+  @@map("tbl_workspace")
 }
 
-model TblRelease {
-  id               String                @id @default(uuid()) @map("id")
-  workspaceId      String                @map("workspace_id")
-  workspace        TblWorkspace          @relation(fields: [workspaceId], references: [id])
-  version          String                @unique @map("version")
-  description      String                @map("description")
-  startDate        DateTime              @map("start_date")
-  endDate          DateTime?             @map("end_date")
-  status           ReleaseStatus         @map("status")
-  UserNotification TblUserNotification[]
-  Feature          TblFeature[]
+model WorkspaceUser {
+  id          String @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        String
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("tbl_workspace_user")
+}
+
+model WorkspaceSetting {
+  id               String @id @default(uuid())
+  workspaceId      String @unique
+  maxManagers      Int    @default(1)
+  maxCollaborators Int    @default(6)
+  featureReviewers Int    @default(1)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("tbl_workspace_setting")
+}
+
+model Release {
+  id          String    @id @default(uuid())
+  workspaceId String
+  version     String    @unique
+  startDate   DateTime
+  endDate     DateTime?
+  status      String
+
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
+  features      Feature[]
+  notifications Notification[]
 
   @@map("tbl_release")
 }
 
-model TblFeature {
-  id              String             @id @default(uuid()) @map("id")
-  releaseId       String             @map("release_id")
-  release         TblRelease         @relation(fields: [releaseId], references: [id])
-  developerId     String             @map("developer_id")
-  developer       TblUser            @relation(fields: [developerId], references: [id])
-  pullRequestLink String             @map("pull_request_link")
-  ticketLink      String?            @map("ticket_link")
-  status          ReviewStatus       @map("status")
-  createdOn       DateTime           @map("created_on")
-  updatedOn       DateTime           @map("updated_on")
-  FeatureReview   TblFeatureReview[]
-  FeatureUpdate   TblFeatureUpdate[]
-  FeatureStat     TblFeatureStat[]
+model Feature {
+  id              String    @id @default(uuid())
+  releaseId       String    @unique
+  developerId     String
+  pullRequestLink String
+  ticketLink      String
+  status          String
+  createdOn       DateTime  @default(now())
+  updatedOn       DateTime?
+
+  release        Release         @relation(fields: [releaseId], references: [id])
+  developer      User            @relation("FeatureDeveloper", fields: [developerId], references: [id])
+  featureStat    FeatureStat?
+  featureReviews FeatureReview[]
+  featureUpdates FeatureUpdate[]
+  Notification   Notification[]
 
   @@map("tbl_feature")
 }
 
-model TblFeatureReview {
-  id               String                @id @default(uuid()) @map("id")
-  featureId        String                @map("feature_id")
-  feature          TblFeature            @relation(fields: [featureId], references: [id])
-  reviewerId       String                @map("reviewer_id")
-  reviewer         TblUser               @relation(fields: [reviewerId], references: [id])
-  functional       Boolean               @map("functional")
-  cleanCode        FieldStatus           @map("clean_code")
-  featureTest      FieldStatus           @map("feature_test")
-  securityChecks   FieldStatus?          @map("security_checks")
-  status           ReviewStatus          @map("status")
-  comment          String                @map("comment") @db.VarChar(1000)
-  reviewedOn       DateTime              @map("reviewed_on")
-  UserNotification TblUserNotification[]
+model FeatureStat {
+  id             String    @id @default(uuid())
+  featureId      String    @unique
+  startDate      DateTime
+  completionDate DateTime?
+  rejections     Int       @default(0)
+  updates        Int       @default(0)
 
-  @@map("tbl_feature_review")
-}
-
-model TblFeatureUpdate {
-  id        String     @id @default(uuid()) @map("id")
-  featureId String     @map("feature_id")
-  feature   TblFeature @relation(fields: [featureId], references: [id])
-  comment   String     @map("comment") @db.VarChar(1000)
-  updatedOn DateTime   @map("updated_on")
-
-  @@map("tbl_feature_update")
-}
-
-model TblFeatureStat {
-  id             String     @id @default(uuid()) @map("id")
-  featureId      String     @map("feature_id")
-  feature        TblFeature @relation(fields: [featureId], references: [id])
-  startDate      DateTime   @map("start_date")
-  completionDate DateTime?  @map("completion_date")
-  rejections     Int        @default(0) @map("rejections")
-  updated        Int        @default(0) @map("updated")
+  feature Feature @relation(fields: [featureId], references: [id])
 
   @@map("tbl_feature_stat")
 }
 
-model ReleaseSummary {
-  releaseId        String        @map("release_id")
-  version          String
-  description      String
-  startDate        DateTime      @map("start_date")
-  endDate          DateTime?     @map("end_date")
-  status           ReleaseStatus
-  totalFeatures    Int           @map("total_features")
-  approvedFeatures Int           @map("approved_features")
-  rejectedFeatures Int           @map("rejected_features")
-  updatedFeatures  Int           @map("updated_features")
+model FeatureReview {
+  id             String    @id @default(uuid())
+  featureId      String
+  reviewerId     String
+  functionl      Boolean   @default(false)
+  cleanCode      String    @default("not-applied")
+  featureTest    String    @default("not-applied")
+  securityChecks String    @default("not-applied")
+  status         String    @default("pending")
+  comment        String?
+  reviewedOn     DateTime?
 
-  @@map("vw_release_summary")
-  @@ignore
+  feature  Feature @relation(fields: [featureId], references: [id])
+  reviewer User    @relation("FeatureReviewer", fields: [reviewerId], references: [id])
+
+  @@map("tbl_feature_review")
 }
 
-model ViewFeatureReviews {
-  featureReviewId   String       @map("feature_review_id")
-  featureId         String       @map("feature_id")
-  pullRequestLink   String       @map("pull_request_link")
-  ticketLink        String?
-  reviewerId        String       @map("reviewer_id")
-  reviewerFirstname String       @map("reviewer_firstname")
-  reviewerLastname  String       @map("reviewer_lastname")
-  functional        Boolean
-  cleanCode         FieldStatus  @map("clean_code")
-  featureTest       FieldStatus  @map("feature_test")
-  securityChecks    FieldStatus?
-  reviewStatus      ReviewStatus @map("review_status")
-  comment           String       @db.VarChar(1000)
-  reviewedOn        DateTime     @map("reviewed_on")
+model FeatureUpdate {
+  id        String   @id @default(uuid())
+  featureId String
+  comment   String
+  updatedOn DateTime @default(now())
 
-  @@map("vw_feature_reviews")
-  @@ignore
+  feature Feature @relation(fields: [featureId], references: [id])
+
+  @@map("tbl_feature_update")
 }
 
-model ViewUserNotifications {
-  notificationId   String             @map("notification_id")
-  workspaceId      String             @map("workspace_id")
-  userId           String             @map("user_id")
-  featureReviewId  String?            @map("feature_review_id")
-  releaseId        String?            @map("release_id")
-  createdOn        DateTime           @map("created_on")
-  readByUser       Boolean            @map("read_by_user")
-  notificationType NotificationType   @map("notification_type")
-  statusType       NotificationStatus @map("status_type")
-  featureId        String?            @map("feature_id")
-  pullRequestLink  String?            @map("pull_request_link")
-  releaseVersion   String?            @map("release_version")
+model Notification {
+  id               String   @id @default(uuid())
+  userId           String
+  workspaceId      String?
+  releaseId        String?
+  featureId        String?
+  notificationType String
+  readByUser       Boolean  @default(false)
+  createdOn        DateTime @default(now())
 
-  @@map("vw_user_notifications")
-  @@ignore
-}
+  user      User       @relation(fields: [userId], references: [id])
+  workspace Workspace? @relation(fields: [workspaceId], references: [id])
+  release   Release?   @relation(fields: [releaseId], references: [id])
+  feature   Feature?   @relation(fields: [featureId], references: [id])
 
-model ViewDeveloperPerformance {
-  developerId      String @map("developer_id")
-  firstname        String
-  lastname         String
-  totalFeatures    Int    @map("total_features")
-  approvedFeatures Int    @map("approved_features")
-  avgUpdates       Float  @map("avg_updates")
-  totalRejections  Int    @map("total_rejections")
-
-  @@map("vw_developer_performance")
-  @@ignore
+  @@map("tbl_notification")
 }

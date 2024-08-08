@@ -1,6 +1,6 @@
 export interface IConfig {
   environment: string;
   port: string | number;
-  cors: string | string[];
+  cors: string;
   encryptionKey: string;
 }
