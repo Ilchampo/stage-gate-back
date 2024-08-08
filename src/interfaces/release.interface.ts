@@ -1,4 +1,4 @@
-import type { EnumStatus } from '@prisma/client';
+import { EnumStatus } from '../enums/status.enum';
 
 export interface IRelease {
   id: string;

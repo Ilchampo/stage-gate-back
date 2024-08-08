@@ -1,4 +1,4 @@
-import { EnumRole } from '@prisma/client';
+import { EnumRole } from '../../enums/role.enum';
 
 export interface IWorkspaceUser {
   id: string;

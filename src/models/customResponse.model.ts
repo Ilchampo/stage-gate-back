@@ -1,4 +1,4 @@
-import httpCodes from '@src/constants/httpCodes';
+import httpCodes from '../constants/httpCodes';
 
 class CustomResponse<T> {
   public code: number;

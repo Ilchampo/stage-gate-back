@@ -1,4 +1,4 @@
-import type { IConfig } from '@src/interfaces/config.interface';
+import type { IConfig } from '../interfaces/config.interface';
 import dotenv from 'dotenv';
 
 dotenv.config();

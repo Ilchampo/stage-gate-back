@@ -3,17 +3,17 @@ import type {
   IUserLoginCreateArgs,
   IUserLoginUpdateArgs,
   IUserLoginUpdatePassword,
-} from '@src/services/UserLogin/userLogin.interface';
+} from './userLogin.interface';
 
 import { validatePlatformCodeService } from '../PlatformCode/platformCode.service';
-import { createPlatformLogService } from '@src/services/PlatformLog/platformLog.service';
-import { handleError } from '@src/helpers/handlerError';
-import { encryptPassword, verifyPassword } from '@src/helpers/encryption';
+import { createPlatformLogService } from '../PlatformLog/platformLog.service';
+import { handleError } from '../../helpers/handlerError';
+import { encryptPassword, verifyPassword } from '../../helpers/encryption';
 
-import CustomResponse from '@src/models/customResponse.model';
-import httpCodes from '@src/constants/httpCodes';
-import responseCodes from '@src/constants/responseCodes';
-import prisma from '@src/config/database';
+import CustomResponse from '../../models/customResponse.model';
+import httpCodes from '../../constants/httpCodes';
+import responseCodes from '../../constants/responseCodes';
+import prisma from '../../config/database';
 
 export const createUserLoginService = async (
   args: IUserLoginCreateArgs

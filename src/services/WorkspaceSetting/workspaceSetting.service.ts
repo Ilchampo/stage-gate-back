@@ -2,15 +2,15 @@ import type {
   IWorkspaceSetting,
   IWorkspaceSettingCreateArgs,
   IWorkspaceSettingUpdateArgs,
-} from '@src/services/WorkspaceSetting/workspaceSetting.interface';
+} from './workspaceSetting.interface';
 
-import { createPlatformLogService } from '@src/services/PlatformLog/platformLog.service';
-import { handleError } from '@src/helpers/handlerError';
+import { createPlatformLogService } from '../PlatformLog/platformLog.service';
+import { handleError } from '../../helpers/handlerError';
 
-import CustomResponse from '@src/models/customResponse.model';
-import httpCodes from '@src/constants/httpCodes';
-import responseCodes from '@src/constants/responseCodes';
-import prisma from '@src/config/database';
+import CustomResponse from '../../models/customResponse.model';
+import httpCodes from '../../constants/httpCodes';
+import responseCodes from '../../constants/responseCodes';
+import prisma from '../../config/database';
 
 export const createWorkspaceSettingService = async (
   args: IWorkspaceSettingCreateArgs

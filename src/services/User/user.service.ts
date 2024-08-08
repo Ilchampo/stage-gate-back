@@ -1,16 +1,12 @@
-import type {
-  IUser,
-  IUserCreateArgs,
-  IUserUpdateArgs,
-} from '@src/services/User/user.interface';
+import type { IUser, IUserCreateArgs, IUserUpdateArgs } from './user.interface';
 
-import { createPlatformLogService } from '@src/services/PlatformLog/platformLog.service';
-import { handleError } from '@src/helpers/handlerError';
+import { createPlatformLogService } from '../PlatformLog/platformLog.service';
+import { handleError } from '../../helpers/handlerError';
 
-import CustomResponse from '@src/models/customResponse.model';
-import httpCodes from '@src/constants/httpCodes';
-import responseCodes from '@src/constants/responseCodes';
-import prisma from '@src/config/database';
+import CustomResponse from '../../models/customResponse.model';
+import httpCodes from '../../constants/httpCodes';
+import responseCodes from '../../constants/responseCodes';
+import prisma from '../../config/database';
 
 export const createUserService = async (
   args: IUserCreateArgs

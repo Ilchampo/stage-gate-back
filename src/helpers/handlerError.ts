@@ -1,5 +1,5 @@
 import httpCodes from '../constants/httpCodes';
-import responseCodes from '@src/constants/responseCodes';
+import responseCodes from '../constants/responseCodes';
 import CustomResponse from '../models/customResponse.model';
 
 export const handleError = (error: unknown): CustomResponse<unknown> => {

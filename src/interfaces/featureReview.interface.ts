@@ -1,4 +1,5 @@
-import type { EnumCheck, EnumStatus } from '@prisma/client';
+import type { EnumCheck } from '../enums/check.enum';
+import type { EnumStatus } from '../enums/status.enum';
 
 export interface IFeatureReview {
   id: string;

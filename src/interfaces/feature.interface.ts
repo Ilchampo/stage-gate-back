@@ -1,4 +1,4 @@
-import type { EnumStatus } from '@prisma/client';
+import type { EnumStatus } from '../enums/status.enum';
 
 export interface IFeature {
   id: string;

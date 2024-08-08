@@ -1,24 +1,18 @@
-import type {
-  IAuthSignInArgs,
-  IAuthSignUpArgs,
-} from '@src/services/Auth/auth.interface';
+import type { IAuthSignInArgs, IAuthSignUpArgs } from './auth.interface';
 
-import {
-  createUserService,
-  getUserByEmailService,
-} from '@src/services/User/user.service';
+import { createUserService, getUserByEmailService } from '../User/user.service';
 import {
   createUserLoginService,
   getUserLoginByUserIdService,
-} from '@src/services/UserLogin/userLogin.service';
-import { createPlatformLogService } from '@src/services/PlatformLog/platformLog.service';
-import { handleError } from '@src/helpers/handlerError';
-import { verifyPassword } from '@src/helpers/encryption';
-import { generateToken } from '@src/helpers/authorization';
+} from '../UserLogin/userLogin.service';
+import { createPlatformLogService } from '../PlatformLog/platformLog.service';
+import { handleError } from '../../helpers/handlerError';
+import { verifyPassword } from '../../helpers/encryption';
+import { generateToken } from '../../helpers/authorization';
 
-import CustomResponse from '@src/models/customResponse.model';
-import httpCodes from '@src/constants/httpCodes';
-import responseCodes from '@src/constants/responseCodes';
+import CustomResponse from '../../models/customResponse.model';
+import httpCodes from '../../constants/httpCodes';
+import responseCodes from '../../constants/responseCodes';
 
 export const signInService = async (
   args: IAuthSignInArgs

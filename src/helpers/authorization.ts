@@ -1,7 +1,7 @@
-import type { IAuthToken } from '@src/services/Auth/auth.interface';
+import type { IAuthToken } from '../services/Auth/auth.interface';
 
 import jwt from 'jsonwebtoken';
-import config from '@src/config/config';
+import config from '../config/config';
 
 export const generateToken = (data: IAuthToken): string => {
   try {
