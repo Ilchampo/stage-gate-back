@@ -1,6 +1,9 @@
 import Joi from 'joi';
 
 export const authValidationSchema = {
+  code: Joi.object({
+    code: Joi.string().required(),
+  }),
   signIn: Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),

@@ -7,6 +7,15 @@ import validationMiddleware from '../middlewares/validation.middleware';
 
 const router = Router();
 
+// @method  POST /auth/validate-code
+// @desc    Validate code
+// @access  Public
+router.post(
+  '/validate-code',
+  validationMiddleware(authValidationSchema.code),
+  authController.validateCodeController
+);
+
 // @method  POST /auth/signup
 // @desc    Sign un user
 // @access  Public

@@ -5,6 +5,7 @@ import {
   createUserLoginService,
   getUserLoginByUserIdService,
 } from '../UserLogin/userLogin.service';
+import { validatePlatformCodeService } from '../PlatformCode/platformCode.service';
 import { createPlatformLogService } from '../PlatformLog/platformLog.service';
 import { handleError } from '../../helpers/handlerError';
 import { verifyPassword } from '../../helpers/encryption';
@@ -13,6 +14,19 @@ import { generateToken } from '../../helpers/authorization';
 import CustomResponse from '../../models/customResponse.model';
 import httpCodes from '../../constants/httpCodes';
 import responseCodes from '../../constants/responseCodes';
+
+export const validateCodeService = async (
+  code: string
+): Promise<CustomResponse<boolean>> => {
+  try {
+    const isValidPlatformCode = await validatePlatformCodeService(code);
+
+    return new CustomResponse(httpCodes.OK, isValidPlatformCode, undefined);
+  } catch (error) {
+    await createPlatformLogService({ description: error as string });
+    return handleError(error) as CustomResponse<boolean>;
+  }
+};
 
 export const signInService = async (
   args: IAuthSignInArgs
