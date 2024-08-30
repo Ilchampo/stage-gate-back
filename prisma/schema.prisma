@@ -73,7 +73,7 @@ model User {
 
 model UserLogin {
   id              String  @id @default(uuid())
-  userId          String  @unique
+  userId          String  @unique @map("user_id")
   password        String
   onBoarding      Boolean @default(false) @map("on_boarding")
   verifiedEmail   Boolean @default(false) @map("verified_email")

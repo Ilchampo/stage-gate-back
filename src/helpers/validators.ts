@@ -10,15 +10,10 @@ export const authValidationSchema = {
   }),
   signUp: Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
-    avatar: Joi.binary().allow(null),
-    onBoarding: Joi.boolean().allow(null).default(false),
-    verifiedEmail: Joi.boolean().allow(null).default(false),
-    privacyPolicy: Joi.boolean().allow(null).default(false),
-    defaultLanguage: Joi.string().required().default('en'),
-    platformCode: Joi.string().required(),
+    password: Joi.string().required(),
+    code: Joi.string().required(),
   }),
 };
 

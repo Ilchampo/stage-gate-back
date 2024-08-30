@@ -1,6 +1,10 @@
 import type { IAuthSignInArgs, IAuthSignUpArgs } from './auth.interface';
 
-import { createUserService, getUserByEmailService } from '../User/user.service';
+import {
+  createUserService,
+  deleteUserService,
+  getUserByEmailService,
+} from '../User/user.service';
 import {
   createUserLoginService,
   getUserLoginByUserIdService,
@@ -88,12 +92,12 @@ export const signInService = async (
 export const signUpService = async (
   args: IAuthSignUpArgs
 ): Promise<CustomResponse<string | undefined>> => {
-  const { firstname, lastname, email, avatar, password, platformCode } = args;
+  const { firstname, lastname, email, password, code } = args;
 
   try {
     const user = await getUserByEmailService(email);
 
-    if (user) {
+    if (user.data) {
       return new CustomResponse(
         httpCodes.CONFLICT,
         undefined,
@@ -105,7 +109,6 @@ export const signUpService = async (
       firstname,
       lastname,
       email,
-      avatar,
     });
 
     if (newUser.error || newUser.code !== httpCodes.CREATED || !newUser.data) {
@@ -116,10 +119,12 @@ export const signUpService = async (
       userId: newUser.data.id,
       password,
       privacyPolicy: true,
-      platformCode,
+      platformCode: code,
     });
 
     if (newUserLogin.error || newUserLogin.code !== httpCodes.CREATED) {
+      await deleteUserService(newUser.data.id);
+
       return new CustomResponse(
         newUserLogin.code,
         undefined,

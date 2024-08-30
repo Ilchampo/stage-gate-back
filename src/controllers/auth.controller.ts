@@ -34,16 +34,16 @@ export const signUpController = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { firstname, lastname, email, avatar, password, platformCode } =
-      req.body;
+    const { firstname, lastname, email, password, code } = req.body;
+
     const response = await authService.signUpService({
       firstname,
       lastname,
       email,
-      avatar,
       password,
-      platformCode,
+      code,
     });
+
     return res.status(response.code).json(response);
   } catch (error) {
     return res.status(httpCodes.INTERNAL_SERVER_ERROR).json(error);

@@ -1,14 +1,15 @@
-import { IUserCreateArgs } from '../User/user.interface';
-import { IUserLoginCreateArgs } from '../UserLogin/userLogin.interface';
-
 export interface IAuthSignInArgs {
   email: string;
   password: string;
 }
 
-export interface IAuthSignUpArgs
-  extends IUserCreateArgs,
-    Omit<IUserLoginCreateArgs, 'userId'> {}
+export interface IAuthSignUpArgs {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  code: string;
+}
 
 export interface IAuthToken {
   id: string;
